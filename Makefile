@@ -1,5 +1,5 @@
 all:
-	gcc src/*.c -g -o trabI -Wall -ggdb3 -I /headers
+	gcc src/*.c -g -o trabI -Wall -ggdb3 -lm -I /headers
 
 run: all
 	./trabI
