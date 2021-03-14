@@ -5,7 +5,7 @@
 
 #include "../headers/ponto.h"
 #include "../headers/dbg.h"
-
+#include "../headers/mathShit.h"
 
 Ponto* leEntrada(char* nome, int nLinhas, int nColunas)
 {
@@ -13,7 +13,7 @@ Ponto* leEntrada(char* nome, int nLinhas, int nColunas)
     Ponto *pontos = malloc(sizeof(Ponto) *nLinhas);
     alocaColunas(pontos, nLinhas, nColunas);
 
-    pontos_pointer = fopen("in/1.txt", "r");
+    pontos_pointer = fopen("in/teste.txt", "r");
     check(pontos_pointer, "DEU RUIM NA ABERTURA DO ARQUIVO")
     char *line;
     size_t len = 0;
@@ -31,7 +31,6 @@ Ponto* leEntrada(char* nome, int nLinhas, int nColunas)
 
         //printf("%s\n", line);
         line_token = strtok(line, ",");
-        double componentes[nColunas];
         int iterAuxC = 0;
         while(line_token != NULL)
         {
@@ -55,7 +54,7 @@ error:
 int pegaDimensoesC(char *nome)
 {
     FILE *pontos_pointer;
-    pontos_pointer = fopen("in/1.txt", "r");
+    pontos_pointer = fopen("in/teste.txt", "r");
     if(pontos_pointer == NULL)
     {
         perror("N abri\n");
@@ -64,7 +63,6 @@ int pegaDimensoesC(char *nome)
     
     char *line;
     size_t len = 0;
-    ssize_t nRead;
     
     getline(&line, &len, pontos_pointer);
     char *line_token = strtok(line, ",");
@@ -86,7 +84,7 @@ int pegaDimensoesC(char *nome)
 int pegaDimensoesL(char *nome)
 {
     FILE *pontos_pointer;
-    pontos_pointer = fopen("in/1.txt", "r");
+    pontos_pointer = fopen("in/teste.txt", "r");
     if(pontos_pointer == NULL)
     {
         perror("N abri\n");
@@ -118,28 +116,22 @@ int main()
 {
     int linhas = pegaDimensoesL("nome");
     int colunas = pegaDimensoesC("nome");
-    assert(linhas == 50);
-    assert(colunas == 2);
 
     Ponto *pontos = leEntrada("nome", linhas, colunas);
-    printf("LE AQUI\n");
-    Ponto teste = pontos[0];
-    printf("li\n");
     for(int i = 0; i < linhas; i ++)
     {
         //printf("%s ", pontos[i].name);
         for(int j = 0; j < colunas; j++)
         {
-            //printf("%lf ", pontos[i].components[j]);
+            //printf("%lf\n", pontos[i].components[j]);
         }
         //printf("\n");
     }
 
-    for(int i = 0; i < linhas; i++)
-    {
-        free(pontos[i].name);
-        free(pontos[i].components);
-        
-    }
-    free(pontos);
+    int nArestas = (linhas * (linhas - 1))/2;
+    Aresta *grafo = wtArestas(pontos, linhas, colunas, nArestas);
+    qsort(grafo, nArestas, sizeof(Aresta), &arestaComp);
+
+    liberaPontos(pontos, linhas);
+    free(grafo);
 }
