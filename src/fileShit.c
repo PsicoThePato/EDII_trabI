@@ -14,7 +14,7 @@ Ponto* leEntrada(char* nome, int nLinhas, int nColunas)
     Ponto *pontos = malloc(sizeof(Ponto) *nLinhas);
     alocaColunas(pontos, nLinhas, nColunas);
 
-    pontos_pointer = fopen("in/1.txt", "r");
+    pontos_pointer = fopen(nome, "r");
     check(pontos_pointer, "DEU RUIM NA ABERTURA DO ARQUIVO")
     char *line;
     size_t len = 0;
@@ -55,7 +55,7 @@ error:
 int pegaDimensoesC(char *nome)
 {
     FILE *pontos_pointer;
-    pontos_pointer = fopen("in/1.txt", "r");
+    pontos_pointer = fopen(nome, "r");
     if(pontos_pointer == NULL)
     {
         perror("N abri\n");
@@ -85,7 +85,7 @@ int pegaDimensoesC(char *nome)
 int pegaDimensoesL(char *nome)
 {
     FILE *pontos_pointer;
-    pontos_pointer = fopen("in/1.txt", "r");
+    pontos_pointer = fopen(nome, "r");
     if(pontos_pointer == NULL)
     {
         perror("N abri\n");
@@ -113,12 +113,21 @@ int pegaDimensoesL(char *nome)
 }
 
 
-int main()
+int main(int argc, char**argv)
 {
-    int linhas = pegaDimensoesL("nome");
-    int colunas = pegaDimensoesC("nome");
+    if(argc != 4)
+    {
+        printf("Número bizarro de argumentos de entrada\n");
+        exit(1);
+    }
+    char *arqEntrada = argv[1];
+    int k = atoi(argv[2]);
+    char *arqSaida = argv[3];
 
-    Ponto *pontos = leEntrada("nome", linhas, colunas);
+
+    int linhas = pegaDimensoesL(arqEntrada);
+    int colunas = pegaDimensoesC(arqEntrada);
+    Ponto *pontos = leEntrada(arqEntrada, linhas, colunas);
     for(int i = 0; i < linhas; i ++)
     {
         //printf("%s ", pontos[i].name);
@@ -140,20 +149,23 @@ int main()
         ufVec[i].rank = 0;
     }
 
-    int k = 3;
-    int delimitador = linhas - k;
+    int delimitador = linhas - 1;
     Aresta* movimentoSemTerra = fazMst(ufVec, arestas, linhas, nArestas, k);
-    for(int i = 0; i < delimitador; i++)
-    {
-        printf("############");
-        printf("PONTO A: %d\n", movimentoSemTerra[i].pontoA);
-        printf("PONTO B: %d\n", movimentoSemTerra[i].pontoB);
-        printf("############");
-        printf("Aresta (%s %s) \n", pontos[movimentoSemTerra[i].pontoA].name, pontos[movimentoSemTerra[i].pontoB].name);
-
-    }
-    liberaPontos(pontos, linhas);
     free(arestas);
+
+    for(int i = 0; i < linhas; i++)
+    {
+        if(ufVec[i].pai != -1)
+        {
+            printf("O ponto %s pertence ao grupo %d\n", pontos[i].name, ufVec[i].pai);
+        }
+        else
+        {
+            printf("O ponto %s pertence ao grupo %d\n", pontos[i].name, i);
+        }
+    }
+    
+    liberaPontos(pontos, linhas);
     free(ufVec);
     free(movimentoSemTerra);
 }

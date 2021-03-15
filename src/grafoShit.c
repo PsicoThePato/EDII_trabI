@@ -18,18 +18,14 @@ int find(Subset *subsets, int i)
         return i;
     }
     
-    if(subsets[i].pai != i)
-    {
-        subsets[i].pai = find(subsets, subsets[i].pai);
-    }
- 
-    return subsets[i].pai;
+    return subsets[i].pai = find(subsets, subsets[i].pai);
 }
 
 void uniao(Subset *subsets, int xroot, int yroot)
 {
     // Attach smaller rank tree under root of high rank tree
     // (Union by Rank)
+    
     if(subsets[xroot].rank < subsets[yroot].rank)
         subsets[xroot].pai = yroot;
     else if(subsets[xroot].rank > subsets[yroot].rank)
@@ -59,9 +55,18 @@ Aresta* fazMst(Subset *subset, Aresta *arestas,int nLinhas, int nArestas, int k)
         {
             uniao(subset, paiA, paiB);
             movimentoSemTerra[i] = arestas[j];
+            // printf(
+            //     "O pai da aresta %d %d é %d\n", 
+            //     movimentoSemTerra[i].pontoA, 
+            //     movimentoSemTerra[i].pontoB, 
+            //     find(subset, movimentoSemTerra[i].pontoB)
+            //     );
             i++;
         }
-        j++;
+        else
+        {
+            j++;
+        }
 
     }
 
