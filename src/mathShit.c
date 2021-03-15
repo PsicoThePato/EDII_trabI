@@ -27,8 +27,8 @@ Aresta* wtArestas(Ponto* pontos, int dimensaoL, int dimensaoC, int nArestas)
         for(int j = i+1; j < dimensaoL; j++)
         {
             double distAB = euclidDist(pontos[i].components, pontos[j].components, dimensaoC);
-            grafo[cont].pontoA = &pontos[i];
-            grafo[cont].pontoB = &pontos[j];
+            grafo[cont].pontoA = i;
+            grafo[cont].pontoB = j;
             grafo[cont].distAB = distAB;
             cont++;
         }

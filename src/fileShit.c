@@ -6,6 +6,7 @@
 #include "../headers/ponto.h"
 #include "../headers/dbg.h"
 #include "../headers/mathShit.h"
+#include "../headers/grafoShit.h"
 
 Ponto* leEntrada(char* nome, int nLinhas, int nColunas)
 {
@@ -129,9 +130,26 @@ int main()
     }
 
     int nArestas = (linhas * (linhas - 1))/2;
-    Aresta *grafo = wtArestas(pontos, linhas, colunas, nArestas);
-    qsort(grafo, nArestas, sizeof(Aresta), &arestaComp);
+    Aresta *arestas = wtArestas(pontos, linhas, colunas, nArestas);
+    qsort(arestas, nArestas, sizeof(Aresta), &arestaComp);
+    //Grafo *grafo = criaGrafo(linhas, nArestas, arestas);
+    Subset *ufVec = malloc(sizeof(Subset) * linhas);
+    for(int i = 0; i < linhas; i++)
+    {
+        ufVec[i].pai = -1;
+        ufVec[i].rank = 0;
+    }
 
+    int k = 3;
+    int delimitador = linhas - k;
+    Aresta* movimentoSemTerra = fazMst(ufVec, arestas, linhas, nArestas, k);
+    for(int i = 0; i < delimitador; i++)
+    {
+        printf("Aresta (%s %s) \n", pontos[movimentoSemTerra[i].pontoA].name, pontos[movimentoSemTerra[i].pontoB].name);
+
+    }
     liberaPontos(pontos, linhas);
-    free(grafo);
+    free(arestas);
+    free(ufVec);
+    free(movimentoSemTerra);
 }

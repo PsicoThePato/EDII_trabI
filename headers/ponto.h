@@ -9,8 +9,8 @@ typedef struct ponto
 
 typedef struct aresta
 {
-	Ponto *pontoA;
-	Ponto *pontoB;
+	int pontoA;
+	int pontoB;
 	double distAB;
 
 }Aresta;
