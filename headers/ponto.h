@@ -5,6 +5,8 @@ typedef struct ponto
 {
 	char *name;			// Pointer to data held by list node
 	double *components;	// Pointer to next element in list
+	int pai;
+	int rank;
 }Ponto;
 
 typedef struct aresta
