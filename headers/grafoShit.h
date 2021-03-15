@@ -20,8 +20,8 @@ typedef struct subset
 
 
 Grafo* criaGrafo(int nLinhas, int nArestas, Aresta* arestas);
-int find(Subset *subsets, int i);
-void uniao(Subset *subsets, int xroot, int yroot);
-Aresta* fazMst(Subset *subset, Aresta *arestas,int nLinhas, int nArestas, int k);
+int find(Ponto *pontos, int i);
+void uniao(Ponto *pontos, int xroot, int yroot);
+void fazMst(Ponto *pontos, Aresta *arestas,int nLinhas, int nArestas, int k);
 
 #endif
