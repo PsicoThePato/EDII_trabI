@@ -14,7 +14,7 @@ Ponto* leEntrada(char* nome, int nLinhas, int nColunas)
     Ponto *pontos = malloc(sizeof(Ponto) *nLinhas);
     alocaColunas(pontos, nLinhas, nColunas);
 
-    pontos_pointer = fopen("in/teste.txt", "r");
+    pontos_pointer = fopen("in/1.txt", "r");
     check(pontos_pointer, "DEU RUIM NA ABERTURA DO ARQUIVO")
     char *line;
     size_t len = 0;
@@ -55,7 +55,7 @@ error:
 int pegaDimensoesC(char *nome)
 {
     FILE *pontos_pointer;
-    pontos_pointer = fopen("in/teste.txt", "r");
+    pontos_pointer = fopen("in/1.txt", "r");
     if(pontos_pointer == NULL)
     {
         perror("N abri\n");
@@ -85,7 +85,7 @@ int pegaDimensoesC(char *nome)
 int pegaDimensoesL(char *nome)
 {
     FILE *pontos_pointer;
-    pontos_pointer = fopen("in/teste.txt", "r");
+    pontos_pointer = fopen("in/1.txt", "r");
     if(pontos_pointer == NULL)
     {
         perror("N abri\n");
@@ -145,6 +145,10 @@ int main()
     Aresta* movimentoSemTerra = fazMst(ufVec, arestas, linhas, nArestas, k);
     for(int i = 0; i < delimitador; i++)
     {
+        printf("############");
+        printf("PONTO A: %d\n", movimentoSemTerra[i].pontoA);
+        printf("PONTO B: %d\n", movimentoSemTerra[i].pontoB);
+        printf("############");
         printf("Aresta (%s %s) \n", pontos[movimentoSemTerra[i].pontoA].name, pontos[movimentoSemTerra[i].pontoB].name);
 
     }

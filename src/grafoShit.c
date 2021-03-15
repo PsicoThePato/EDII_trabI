@@ -52,17 +52,16 @@ Aresta* fazMst(Subset *subset, Aresta *arestas,int nLinhas, int nArestas, int k)
     Aresta *movimentoSemTerra = malloc(sizeof(Aresta) * delimitador);
     while(i < delimitador && j < nArestas)
     {
-        int paiA = find(subset, arestas[i].pontoA);
-        int paiB = find(subset, arestas[i].pontoB);
+        int paiA = find(subset, arestas[j].pontoA);
+        int paiB = find(subset, arestas[j].pontoB);
 
-        if(paiA == paiB)
+        if(paiA != paiB)
         {
-            j++;
-            continue;
+            uniao(subset, paiA, paiB);
+            movimentoSemTerra[i] = arestas[j];
+            i++;
         }
-        uniao(subset, paiA, paiB);
-        movimentoSemTerra[i] = arestas[i];
-        i++;
+        j++;
 
     }
 
