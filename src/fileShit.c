@@ -41,6 +41,8 @@ Ponto* leEntrada(char* nome, int nLinhas, int nColunas)
             line_token = strtok(NULL, ",");
             iterAuxC++;
         }
+        pontos[iterAuxL].pai = -1;
+        pontos[iterAuxL].rank = 0;
         iterAuxL++;
     }
     free(line);
@@ -141,74 +143,14 @@ int main(int argc, char**argv)
     int nArestas = (linhas * (linhas - 1))/2;
     Aresta *arestas = wtArestas(pontos, linhas, colunas, nArestas);
     qsort(arestas, nArestas, sizeof(Aresta), &arestaComp);
-    //Grafo *grafo = criaGrafo(linhas, nArestas, arestas);
-    Subset *ufVec = malloc(sizeof(Subset) * linhas);
+
+    fazMst(pontos, arestas, linhas, nArestas, k);
     for(int i = 0; i < linhas; i++)
     {
-        ufVec[i].pai = -1;
-        ufVec[i].rank = 0;
+        printf("O ponto %s pertence ao grupo %d\n", pontos[i].name, pontos[i].pai);
+        pontos[i].rank = 0;
     }
 
-    int delimitador = linhas - 1;
-    Aresta* movimentoSemTerra = fazMst(ufVec, arestas, linhas, nArestas, k);
     free(arestas);
-    int k_group_size_act[k];
-    for(int i = 0; i < k; i++)
-    {
-        k_group_size_act[i] = 0;
-    }
-    int k_group_size_alct[k];
-    for(int i = 0; i < k; i++)
-    {
-        k_group_size_alct[i] = 10;
-    }
-    char ***kgroup = malloc(sizeof(char**) * k);
-    for(int i = 0; i < k; i++)
-    {
-        kgroup[i] = malloc(sizeof(char **) * 10);
-    }
-    
-    for(int i = 0; i < linhas; i++)
-    {
-        int grupoPonto = -2;
-        if(ufVec[i].pai != -1)
-        {
-            grupoPonto = ufVec[i].pai;
-        }    
-        else
-        {
-            grupoPonto = i;
-        }
-
-        k_group_size_act[grupoPonto]++;
-        if(k_group_size_act[grupoPonto] > k_group_size_alct[grupoPonto])
-        {
-            kgroup[grupoPonto] = realloc(kgroup[grupoPonto], k_group_size_alct[grupoPonto] + 10);
-            k_group_size_alct[grupoPonto] += 10;
-        }
-        kgroup[grupoPonto][k_group_size_act[grupoPonto]] = pontos[i].name;
-        printf("O grupo é %d\n", grupoPonto);
-        printf("A quantidade de elementos nesse grupo é %d\n", k_group_size_act[grupoPonto]);
-        printf("O ponto %s pertence ao grupo %d\n", kgroup[grupoPonto][k_group_size_act[grupoPonto]], ufVec[i].pai);
-    }
-
-
-    for(int i = 0; i < k; i++)
-    {
-        kgroup[i] = realloc(kgroup[i], k_group_size_act[i]);
-    }
-    
-    for(int i = 0; i < k; i++)
-    {
-        printf("grupo %d\n", i);
-        for(int j = 0; j < k_group_size_act[i]; j++)
-        {
-            printf("ponto: %s\n", kgroup[i][j]);
-        }
-    }
-
-    
     liberaPontos(pontos, linhas);
-    free(ufVec);
-    free(movimentoSemTerra);
 }
