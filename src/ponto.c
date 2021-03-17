@@ -86,23 +86,20 @@ int binarySearch(int *vetor, int piso, int teto, int x)
 }
 
 
-void ordenaPontos(Ponto *pontos, int k, int nLinhas)
+void inicializaMatrizGruposPontos(int *labels, int *gCount, char ***groups, Ponto *pontos, int nLinhas, int k, Grupo *grupos)
 {
-    int latest_label_idx = -1;
-    int labels[k];
-    int gCount[k];
     int sCount[k];
+    int latest_label_idx = -1;
     
     for(int i = 0; i < k; i ++)
     {
         gCount[i] = -1;
         sCount[i] = nLinhas/k;
     }
-    
-    char **groups[k];
-    
+
     for(int i = 0; i < k; i++)
     {
+        grupos[i].nomePontos = malloc(sizeof(char **) * nLinhas/k);
         groups[i] = malloc(sizeof(char **) * nLinhas/k);
     }
 
@@ -136,15 +133,53 @@ void ordenaPontos(Ponto *pontos, int k, int nLinhas)
 
         groups[labelIdx][gCount[labelIdx]] = pontos[i].name;
     }
+}
+
+int compPontos(const void *ponto1, const void *ponto2)
+{
+    char *nomePonto1 = ((Ponto *)ponto1)->name;
+    char *nomePonto2 = ((Ponto *)ponto2)->name;
+    return(strcmp(nomePonto1, nomePonto2));
+}
+
+int compGrupos(const void *grupo1, const void *grupo2)
+{
+    char *pElemGrupo1 = *((char ***)grupo1)[0];
+    char *pElemGrupo2 = *((char ***)grupo2)[0];
+    printf("ESTOU COMPARANDO OS PONTOS %s e %s\n", pElemGrupo1, pElemGrupo2);
+    return(strcmp(pElemGrupo1, pElemGrupo2));
+}
+
+void ordenaPontos(Ponto *pontos, int k, int nLinhas)
+{
+    int labels[k];
+    int gCount[k];
+    char **groups[k];
+    Grupo zap[k];
+
+    inicializaMatrizGruposPontos(labels, gCount, groups, pontos, nLinhas, k);
+    FILE *fp = fopen("out/teste.txt", "w+");
+    for(int i = 0; i < k; i++)
+    {
+        qsort(groups[i], gCount[i]+1, sizeof(char*), &compPontos);
+    }
+
+    printf("TESTE %s\n", groups[0][0]);
+    qsort(groups, k, sizeof(char**), &compGrupos);
+     for(int i = 0; i < k; i++)
+    {
+        printf("O grupo é %d\n", i);
+        for(int j = 0; j <= gCount[i]; j++)
+        {
+            printf("O PONTO é %s\n", groups[i][j]);
+            fprintf(fp, "%s,", groups[i][j]);
+        }
+        fputc('\n', fp);
+    }
+    fclose(fp);
 
     for(int i = 0; i < k; i++)
     {
-        for(int j = 0; j <= gCount[i]; j++)
-        {
-            printf("Minha contagem eh %d\n", gCount[i]);
-            printf("VOU ACESSAR O PONTO [%d, %d]\n", i,j);
-            printf("OLHA AQUI, CORNO %s\n", groups[i][j]);
-        }
+        free(groups[i]);
     }
-
 }

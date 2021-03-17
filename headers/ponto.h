@@ -17,6 +17,12 @@ typedef struct aresta
 
 }Aresta;
 
+typedef struct grupo
+{
+	char **nomePontos;
+	int qtdPontos;
+
+}Grupo;
 
 void atribuipIDX(Ponto *pontoI, int i, void *arg);
 void alocaColunas(Ponto *pontoI, int nLinhas, int nColunas);
