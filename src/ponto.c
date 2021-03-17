@@ -100,6 +100,7 @@ void inicializaMatrizGruposPontos(int *labels, int *gCount, char ***groups, Pont
     for(int i = 0; i < k; i++)
     {
         grupos[i].nomePontos = malloc(sizeof(char **) * nLinhas/k);
+        grupos[i].qtdPontos = 0;
         groups[i] = malloc(sizeof(char **) * nLinhas/k);
     }
 
@@ -119,7 +120,7 @@ void inicializaMatrizGruposPontos(int *labels, int *gCount, char ***groups, Pont
             labelIdx = latest_label_idx;
         }
         printf("O idx do grupo é %d\n", labelIdx);
-        gCount[labelIdx]++;
+        grupos[labelIdx].qtdPontos++;
         if(gCount[labelIdx] > sCount[labelIdx] - 1)
         {
             printf("Estou precisando dar um realloc\n");
