@@ -29,5 +29,5 @@ void alocaColunas(Ponto *pontoI, int nLinhas, int nColunas);
 int arestaComp(const void *aresta1, const void *aresta2);
 void liberaPontos(Ponto *pontos, int dimensaoL);
 int binarySearch(int *vetor, int piso, int teto, int x);
-void ordenaPontos(Ponto *pontos, int k, int nLinhas);
+void escreveArquivo(Ponto *pontos, int k, int nLinhas, char *nomeArquivo);
 #endif

@@ -152,6 +152,6 @@ int main(int argc, char**argv)
     //     printf("O ponto %s pertence ao grupo %d\n", pontos[i].name, pontos[i].pai);
     //     pontos[i].rank = 0;
     // }
-    ordenaPontos(pontos, k, linhas);
+    escreveArquivo(pontos, k, linhas, arqSaida);
     liberaPontos(pontos, linhas);
 }

@@ -82,57 +82,77 @@ int binarySearch(int *vetor, int piso, int teto, int x)
   
         return binarySearch(vetor, mid + 1, teto, x); 
     } 
+    
     return -1; 
 }
 
 
-void inicializaMatrizGruposPontos(int *labels, int *gCount, char ***groups, Ponto *pontos, int nLinhas, int k, Grupo *grupos)
+void inicializaMatrizGruposPontos(Grupo *grupos, Ponto *pontos, int nLinhas, int k)
 {
+    int labels[k];
     int sCount[k];
     int latest_label_idx = -1;
-    
-    for(int i = 0; i < k; i ++)
-    {
-        gCount[i] = -1;
-        sCount[i] = nLinhas/k;
-    }
 
     for(int i = 0; i < k; i++)
     {
+        labels[i] = -2;
+        sCount[i] = nLinhas/k;
         grupos[i].nomePontos = malloc(sizeof(char **) * nLinhas/k);
-        grupos[i].qtdPontos = 0;
-        groups[i] = malloc(sizeof(char **) * nLinhas/k);
+        grupos[i].qtdPontos = -1;
     }
 
     for(int i = 0; i < nLinhas; i++)
     {
         int grupo = pontos[i].pai;
+        printf("O GRUPO NA STRUCT É %d\n", pontos[i].pai);
         if(grupo == -1)
         {
+            printf("O GRUPO NA STRUCT ERA -1");
+            printf(" Trocando para %d\n", i);
             grupo = i;
         }
-        
-        int labelIdx = binarySearch(labels, 0, latest_label_idx, grupo);
-        if(labelIdx == -1)
+        printf("O GRUPO EHHHHHHH %d\n", grupo);
+        int labelIdx = binarySearch(labels, 0, latest_label_idx+1, grupo);
+        for(int i = 0; i < k; i++)
         {
-            latest_label_idx++;
-            labels[latest_label_idx] = grupo;
-            labelIdx = latest_label_idx;
+            if(labels[i] == grupo)
+            {
+                labelIdx = i;
+                break;
+            }
+            if(labels[i] == -2)
+            {
+                labels[i] = grupo;
+                labelIdx = i;
+                break;
+            }
         }
+        // if(labelIdx == -1)
+        // {
+        //     printf("O label era -1\n");
+        //     latest_label_idx++;
+        //     labelIdx = latest_label_idx;
+        //     labels[latest_label_idx] = grupo;
+        // }
+
         printf("O idx do grupo é %d\n", labelIdx);
         grupos[labelIdx].qtdPontos++;
-        if(gCount[labelIdx] > sCount[labelIdx] - 1)
+        if(grupos[labelIdx].qtdPontos > sCount[labelIdx] - 1)
         {
             printf("Estou precisando dar um realloc\n");
             sCount[labelIdx] = sCount[labelIdx]*2;
-            printf("ENDEREOC DO INFERNO DO PONTEIRO ANTES: %p\n", groups[labelIdx]);
+            printf("ENDEREOC DO INFERNO DO PONTEIRO ANTES: %p\n", grupos[labelIdx].nomePontos);
             printf("INFERNO DO CARALHO DE ESPAÇOS %d\n", sCount[labelIdx]);
-            groups[labelIdx] = (char **)realloc(groups[labelIdx], (sizeof(char **) * sCount[labelIdx]));
-            printf("ENDEREOC DO INFERNO DO PONTEIRO DEPOIS: %p\n", groups[labelIdx]);
+            grupos[labelIdx].nomePontos = 
+                (char **)realloc(
+                    grupos[labelIdx].nomePontos, 
+                    (sizeof(char **) * sCount[labelIdx])
+                    );
+            printf("ENDEREOC DO INFERNO DO PONTEIRO DEPOIS: %p\n", grupos[labelIdx].nomePontos);
         }
-        printf("Vou atribuir o ponto %s na posição [%d,%d]\n", pontos[i].name, labelIdx, gCount[labelIdx]);
+        printf("Vou atribuir o ponto %s na posição [%d,%d]\n", pontos[i].name, labelIdx, grupos[labelIdx].qtdPontos);
 
-        groups[labelIdx][gCount[labelIdx]] = pontos[i].name;
+        grupos[labelIdx].nomePontos[grupos[labelIdx].qtdPontos] = pontos[i].name;
     }
 }
 
@@ -145,35 +165,30 @@ int compPontos(const void *ponto1, const void *ponto2)
 
 int compGrupos(const void *grupo1, const void *grupo2)
 {
-    char *pElemGrupo1 = *((char ***)grupo1)[0];
-    char *pElemGrupo2 = *((char ***)grupo2)[0];
+    char *pElemGrupo1 = ((Grupo *)grupo1)->nomePontos[0];
+    char *pElemGrupo2 = ((Grupo *)grupo2)->nomePontos[0];
     printf("ESTOU COMPARANDO OS PONTOS %s e %s\n", pElemGrupo1, pElemGrupo2);
     return(strcmp(pElemGrupo1, pElemGrupo2));
 }
 
-void ordenaPontos(Ponto *pontos, int k, int nLinhas)
+void escreveArquivo(Ponto *pontos, int k, int nLinhas, char *nomeArquivo)
 {
-    int labels[k];
-    int gCount[k];
-    char **groups[k];
     Grupo zap[k];
 
-    inicializaMatrizGruposPontos(labels, gCount, groups, pontos, nLinhas, k);
-    FILE *fp = fopen("out/teste.txt", "w+");
+    inicializaMatrizGruposPontos(zap, pontos, nLinhas, k);
+    FILE *fp = fopen(nomeArquivo, "w+");
     for(int i = 0; i < k; i++)
     {
-        qsort(groups[i], gCount[i]+1, sizeof(char*), &compPontos);
+        qsort(zap[i].nomePontos, zap[i].qtdPontos+1, sizeof(char*), &compPontos);
     }
-
-    printf("TESTE %s\n", groups[0][0]);
-    qsort(groups, k, sizeof(char**), &compGrupos);
+    qsort(zap, k, sizeof(Grupo), &compGrupos);
      for(int i = 0; i < k; i++)
     {
         printf("O grupo é %d\n", i);
-        for(int j = 0; j <= gCount[i]; j++)
+        for(int j = 0; j <= zap[i].qtdPontos; j++)
         {
-            printf("O PONTO é %s\n", groups[i][j]);
-            fprintf(fp, "%s,", groups[i][j]);
+            printf("O PONTO é %s\n", zap[i].nomePontos[j]);
+            fprintf(fp, "%s,", zap[i].nomePontos[j]);
         }
         fputc('\n', fp);
     }
@@ -181,6 +196,6 @@ void ordenaPontos(Ponto *pontos, int k, int nLinhas)
 
     for(int i = 0; i < k; i++)
     {
-        free(groups[i]);
+        free(zap[i].nomePontos);
     }
 }
