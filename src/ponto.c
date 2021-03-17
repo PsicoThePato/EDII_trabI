@@ -104,6 +104,10 @@ void inicializaMatrizGruposPontos(Grupo *grupos, Ponto *pontos, int nLinhas, int
     for(int i = 0; i < nLinhas; i++)
     {
         int grupo = pontos[i].pai;
+        while(grupo != -1)
+        {
+            
+        }
         printf("O GRUPO NA STRUCT É %d\n", pontos[i].pai);
         if(grupo == -1)
         {
@@ -113,19 +117,21 @@ void inicializaMatrizGruposPontos(Grupo *grupos, Ponto *pontos, int nLinhas, int
         }
         printf("O GRUPO EHHHHHHH %d\n", grupo);
         int labelIdx = binarySearch(labels, 0, latest_label_idx+1, grupo);
-        for(int i = 0; i < k; i++)
+        for(int j = 0; j < k; j++)
         {
-            if(labels[i] == grupo)
+            if(labels[j] == grupo)
             {
-                labelIdx = i;
+                labelIdx = j;
                 break;
             }
-            if(labels[i] == -2)
+            if(labels[j] == -2)
             {
-                labels[i] = grupo;
-                labelIdx = i;
+                labels[j] = grupo;
+                labelIdx = j;
                 break;
             }
+            if(j == k-1)
+                printf("DEU MERDA AQUI!\n");
         }
         // if(labelIdx == -1)
         // {
@@ -136,7 +142,9 @@ void inicializaMatrizGruposPontos(Grupo *grupos, Ponto *pontos, int nLinhas, int
         // }
 
         printf("O idx do grupo é %d\n", labelIdx);
+        printf("O GRUPO TINHA %d PONTOS\n", grupos[labelIdx].qtdPontos);
         grupos[labelIdx].qtdPontos++;
+        printf("O GRUPO FICOU COM %d PONTOS\n", grupos[labelIdx].qtdPontos);
         if(grupos[labelIdx].qtdPontos > sCount[labelIdx] - 1)
         {
             printf("Estou precisando dar um realloc\n");
@@ -173,7 +181,7 @@ int compGrupos(const void *grupo1, const void *grupo2)
 
 void escreveArquivo(Ponto *pontos, int k, int nLinhas, char *nomeArquivo)
 {
-    Grupo zap[k];
+    Grupo *zap = (Grupo *)malloc(sizeof(Grupo) * k);
 
     inicializaMatrizGruposPontos(zap, pontos, nLinhas, k);
     FILE *fp = fopen(nomeArquivo, "w+");
