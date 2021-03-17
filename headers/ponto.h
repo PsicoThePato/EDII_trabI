@@ -1,5 +1,5 @@
-#ifndef _list_h_
-#define _list_h_
+#ifndef _PONTO_H_
+#define _PONTO_H_
 
 typedef struct ponto 
 {
@@ -18,10 +18,10 @@ typedef struct aresta
 }Aresta;
 
 
-
 void atribuipIDX(Ponto *pontoI, int i, void *arg);
 void alocaColunas(Ponto *pontoI, int nLinhas, int nColunas);
 int arestaComp(const void *aresta1, const void *aresta2);
 void liberaPontos(Ponto *pontos, int dimensaoL);
-
+int binarySearch(int *vetor, int piso, int teto, int x);
+void ordenaPontos(Ponto *pontos, int k, int nLinhas);
 #endif

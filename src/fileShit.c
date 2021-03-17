@@ -143,14 +143,15 @@ int main(int argc, char**argv)
     int nArestas = (linhas * (linhas - 1))/2;
     Aresta *arestas = wtArestas(pontos, linhas, colunas, nArestas);
     qsort(arestas, nArestas, sizeof(Aresta), &arestaComp);
-
     fazMst(pontos, arestas, linhas, nArestas, k);
-    for(int i = 0; i < linhas; i++)
-    {
-        printf("O ponto %s pertence ao grupo %d\n", pontos[i].name, pontos[i].pai);
-        pontos[i].rank = 0;
-    }
-
     free(arestas);
+
+    
+    // for(int i = 0; i < linhas; i++)
+    // {
+    //     printf("O ponto %s pertence ao grupo %d\n", pontos[i].name, pontos[i].pai);
+    //     pontos[i].rank = 0;
+    // }
+    ordenaPontos(pontos, k, linhas);
     liberaPontos(pontos, linhas);
 }

@@ -37,6 +37,7 @@ void uniao(Ponto *pontos, int xroot, int yroot)
     {
         pontos[yroot].pai = xroot;
         pontos[xroot].rank++;
+        //printf("O grupo é %d e ele tem rank %d\n", xroot, pontos[xroot].rank);
     }
 }
 
@@ -58,6 +59,8 @@ void fazMst(Ponto *pontos, Aresta *arestas,int nLinhas, int nArestas, int k)
         else
         {
             j++;
+            if(j == nArestas)
+                exit(1);
         }
 
     }
