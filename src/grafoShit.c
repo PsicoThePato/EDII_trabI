@@ -22,22 +22,16 @@ int find(Ponto *pontos, int i)
 }
 
 void uniao(Ponto *pontos, int xroot, int yroot)
-{
-    // Attach smaller rank tree under root of high rank tree
-    // (Union by Rank)
-    
+{   
     if(pontos[xroot].rank < pontos[yroot].rank)
         pontos[xroot].pai = yroot;
     else if(pontos[xroot].rank > pontos[yroot].rank)
         pontos[yroot].pai = xroot;
  
-    // If ranks are same, then make one as root and
-    // increment its rank by one
     else 
     {
         pontos[yroot].pai = xroot;
         pontos[xroot].rank++;
-        //printf("O grupo é %d e ele tem rank %d\n", xroot, pontos[xroot].rank);
     }
 }
 

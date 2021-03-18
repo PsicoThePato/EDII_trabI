@@ -9,15 +9,8 @@ double euclidDist(double *vetor1, double *vetor2, int dimensao)
     double dist = 0;
     for(int i = 0; i < dimensao; i++)
     {
-        // if(vetor1[i] > vetor2[i])
-        //     dist += vetor1[i] - vetor2[i];
-        // else
-        //     dist += vetor2[i] - vetor1[i];
-        //dist += pow((vetor1[i] - vetor2[i]), 2);
         dist += (vetor1[i] - vetor2[i]) * (vetor1[i] - vetor2[i]);
     }
-
-    //dist = sqrt(dist);
 
     return dist;
 }

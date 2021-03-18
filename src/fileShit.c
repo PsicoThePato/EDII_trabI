@@ -4,7 +4,6 @@
 #include <assert.h>
 
 #include "../headers/ponto.h"
-#include "../headers/dbg.h"
 #include "../headers/mathShit.h"
 #include "../headers/grafoShit.h"
 
@@ -15,12 +14,15 @@ Ponto* leEntrada(char* nome, int nLinhas, int nColunas)
     alocaColunas(pontos, nLinhas, nColunas);
 
     pontos_pointer = fopen(nome, "r");
-    check(pontos_pointer, "DEU RUIM NA ABERTURA DO ARQUIVO")
+    if(!pontos_pointer)
+    {
+        perror("Fopen retornou ponteiro nulo na abertura do aqruivo!\n");
+        exit(1);
+    }
     char *line;
     size_t len = 0;
     ssize_t nRead;
     char *line_token;
-
     int iterAuxL = 0;
     while((nRead = getline(&line, &len, pontos_pointer)) != -1)
     {
@@ -30,14 +32,12 @@ Ponto* leEntrada(char* nome, int nLinhas, int nColunas)
             exit(4);
         }
 
-        //printf("%s\n", line);
         line_token = strtok(line, ",");
         int iterAuxC = 0;
+        
         while(line_token != NULL)
         {
-            //char *teste = strdup(line_token);
             atribuipIDX(&(pontos[iterAuxL]), iterAuxC, &line_token);
-            //printf("%s\n", line_token);
             line_token = strtok(NULL, ",");
             iterAuxC++;
         }
@@ -48,9 +48,6 @@ Ponto* leEntrada(char* nome, int nLinhas, int nColunas)
     free(line);
     fclose(pontos_pointer);
     return pontos;
-
-error:
-    exit(1);
 }
 
 
@@ -107,7 +104,7 @@ int pegaDimensoesL(char *nome)
 
     if(!linhas)
     {
-        perror("Problema na leitura das linhas");
+        perror("Problema na leitura das linhas\n");
         exit(3);
     }
     free(line);
@@ -130,15 +127,6 @@ int main(int argc, char**argv)
     int linhas = pegaDimensoesL(arqEntrada);
     int colunas = pegaDimensoesC(arqEntrada);
     Ponto *pontos = leEntrada(arqEntrada, linhas, colunas);
-    for(int i = 0; i < linhas; i ++)
-    {
-        //printf("%s ", pontos[i].name);
-        for(int j = 0; j < colunas; j++)
-        {
-            //printf("%lf\n", pontos[i].components[j]);
-        }
-        //printf("\n");
-    }
 
     int nArestas = (linhas * (linhas - 1))/2;
     Aresta *arestas = wtArestas(pontos, linhas, colunas, nArestas);
@@ -146,12 +134,6 @@ int main(int argc, char**argv)
     fazMst(pontos, arestas, linhas, nArestas, k);
     free(arestas);
 
-    
-    // for(int i = 0; i < linhas; i++)
-    // {
-    //     printf("O ponto %s pertence ao grupo %d\n", pontos[i].name, pontos[i].pai);
-    //     pontos[i].rank = 0;
-    // }
     escreveArquivo(pontos, k, linhas, arqSaida);
     liberaPontos(pontos, linhas);
 }
