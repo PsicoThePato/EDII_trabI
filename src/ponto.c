@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "../headers/ponto.h"
+#include "../headers/grafoShit.h"
 #include "../headers/dbg.h"
 
 void alocaColunas(Ponto *pontoI, int nLinhas, int nColunas)
@@ -101,22 +102,25 @@ void inicializaMatrizGruposPontos(Grupo *grupos, Ponto *pontos, int nLinhas, int
         grupos[i].qtdPontos = -1;
     }
 
+    int grupo = 0;
     for(int i = 0; i < nLinhas; i++)
     {
-        int grupo = pontos[i].pai;
-        while(grupo != -1)
-        {
-            
-        }
+        // while(grupo != -1)
+        // {
+        //     grupo = pontos[i].pai;
+        //     pontos[i].pai = pontos[grupo].pai;
+        // }
         printf("O GRUPO NA STRUCT É %d\n", pontos[i].pai);
-        if(grupo == -1)
-        {
-            printf("O GRUPO NA STRUCT ERA -1");
-            printf(" Trocando para %d\n", i);
-            grupo = i;
-        }
+        // if(grupo == -1)
+        // {
+        //     printf("O GRUPO NA STRUCT ERA -1");
+        //     printf(" Trocando para %d\n", i);
+        //     grupo = i;
+        // }
+        grupo = find(pontos, i);
         printf("O GRUPO EHHHHHHH %d\n", grupo);
-        int labelIdx = binarySearch(labels, 0, latest_label_idx+1, grupo);
+        int labelIdx = -5;
+        //int labelIdx = binarySearch(labels, 0, latest_label_idx+1, grupo);
         for(int j = 0; j < k; j++)
         {
             if(labels[j] == grupo)
@@ -196,7 +200,11 @@ void escreveArquivo(Ponto *pontos, int k, int nLinhas, char *nomeArquivo)
         for(int j = 0; j <= zap[i].qtdPontos; j++)
         {
             printf("O PONTO é %s\n", zap[i].nomePontos[j]);
-            fprintf(fp, "%s,", zap[i].nomePontos[j]);
+            fprintf(fp, "%s", zap[i].nomePontos[j]);
+            if(j != zap[i].qtdPontos)
+            {
+                fprintf(fp, ",");
+            }
         }
         fputc('\n', fp);
     }
