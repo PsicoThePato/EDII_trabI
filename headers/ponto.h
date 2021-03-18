@@ -76,5 +76,27 @@ void liberaPontos(Ponto *pontos, int dimensaoL);
  */
 void escreveArquivo(Ponto *pontos, int k, int nLinhas, char *nomeArquivo);
 
+/*
+ * compPontos
+ * IN:	 *ponto1 - Um ponto
+ * 		 *ponto2 - Outro ponto
+ * OUT:	 1 se ponto1 > ponto2
+ * 		 0 se ponto1 == ponto2
+ * 		-1 se ponto1 < ponto2
+ * POST: -
+ */
+int compPontos(const void *ponto1, const void *ponto2);
 
+/*
+ * compGrupos
+ * IN:	 *grupo1 - Um grupo
+ * 		 *grupo2 - Outro grupo
+ * OUT:	 1 se grupo1 > grupo2
+ * 		 0 se grupo1 == grupo2
+ * 		-1 se grupo1 < grupo2
+ * POST: -
+ */
+int compGrupos(const void *grupo1, const void *grupo2);
+
+void inicializaMatrizGruposPontos(Grupo *grupos, Ponto *pontos, int nLinhas, int k);
 #endif

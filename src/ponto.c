@@ -66,7 +66,6 @@ void inicializaMatrizGruposPontos(Grupo *grupos, Ponto *pontos, int nLinhas, int
 {
     int labels[k];
     int sCount[k];
-    int latest_label_idx = -1;
 
     for(int i = 0; i < k; i++)
     {
@@ -130,38 +129,4 @@ int compGrupos(const void *grupo1, const void *grupo2)
     char *pElemGrupo1 = ((Grupo *)grupo1)->nomePontos[0];
     char *pElemGrupo2 = ((Grupo *)grupo2)->nomePontos[0];
     return(strcmp(pElemGrupo1, pElemGrupo2));
-}
-
-void escreveArquivo(Ponto *pontos, int k, int nLinhas, char *nomeArquivo)
-{
-    Grupo *zap = (Grupo *)malloc(sizeof(Grupo) * k);
-
-    inicializaMatrizGruposPontos(zap, pontos, nLinhas, k);
-    FILE *fp = fopen(nomeArquivo, "w+");
-    
-    for(int i = 0; i < k; i++)
-    {
-        qsort(zap[i].nomePontos, zap[i].qtdPontos+1, sizeof(char*), &compPontos);
-    }
-    qsort(zap, k, sizeof(Grupo), &compGrupos);
-    
-    for(int i = 0; i < k; i++)
-    {
-        for(int j = 0; j <= zap[i].qtdPontos; j++)
-        {
-            fprintf(fp, "%s", zap[i].nomePontos[j]);
-            if(j != zap[i].qtdPontos)
-            {
-                fprintf(fp, ",");
-            }
-        }
-        fputc('\n', fp);
-    }
-    fclose(fp);
-
-    for(int i = 0; i < k; i++)
-    {
-        free(zap[i].nomePontos);
-    }
-    free(zap);
 }

@@ -4,8 +4,6 @@
 #include <assert.h>
 
 #include "../headers/ponto.h"
-#include "../headers/mathShit.h"
-#include "../headers/grafoShit.h"
 
 Ponto* leEntrada(char* nome, int nLinhas, int nColunas)
 {
@@ -112,28 +110,36 @@ int pegaDimensoesL(char *nome)
 }
 
 
-int main(int argc, char**argv)
+void escreveArquivo(Ponto *pontos, int k, int nLinhas, char *nomeArquivo)
 {
-    if(argc != 4)
+    Grupo *zap = (Grupo *)malloc(sizeof(Grupo) * k);
+
+    inicializaMatrizGruposPontos(zap, pontos, nLinhas, k);
+    FILE *fp = fopen(nomeArquivo, "w+");
+    
+    for(int i = 0; i < k; i++)
     {
-        printf("Número bizarro de argumentos de entrada\n");
-        exit(1);
+        qsort(zap[i].nomePontos, zap[i].qtdPontos+1, sizeof(char*), &compPontos);
     }
-    char *arqEntrada = argv[1];
-    int k = atoi(argv[2]);
-    char *arqSaida = argv[3];
+    qsort(zap, k, sizeof(Grupo), &compGrupos);
+    
+    for(int i = 0; i < k; i++)
+    {
+        for(int j = 0; j <= zap[i].qtdPontos; j++)
+        {
+            fprintf(fp, "%s", zap[i].nomePontos[j]);
+            if(j != zap[i].qtdPontos)
+            {
+                fprintf(fp, ",");
+            }
+        }
+        fputc('\n', fp);
+    }
+    fclose(fp);
 
-
-    int linhas = pegaDimensoesL(arqEntrada);
-    int colunas = pegaDimensoesC(arqEntrada);
-    Ponto *pontos = leEntrada(arqEntrada, linhas, colunas);
-
-    int nArestas = (linhas * (linhas - 1))/2;
-    Aresta *arestas = wtArestas(pontos, linhas, colunas, nArestas);
-    qsort(arestas, nArestas, sizeof(Aresta), &arestaComp);
-    fazMst(pontos, arestas, linhas, nArestas, k);
-    free(arestas);
-
-    escreveArquivo(pontos, k, linhas, arqSaida);
-    liberaPontos(pontos, linhas);
+    for(int i = 0; i < k; i++)
+    {
+        free(zap[i].nomePontos);
+    }
+    free(zap);
 }
