@@ -1,10 +1,12 @@
-#ifndef _list_h_
-#define _list_h_
+#ifndef _PONTO_H_
+#define _PONTO_H_
 
 typedef struct ponto 
 {
-	char *name;			// Pointer to data held by list node
-	double *components;	// Pointer to next element in list
+	char *name;			
+	double *components;
+	int pai;
+	int rank;
 }Ponto;
 
 typedef struct aresta
@@ -15,11 +17,86 @@ typedef struct aresta
 
 }Aresta;
 
+typedef struct grupo
+{
+	char **nomePontos;
+	int qtdPontos;
+
+}Grupo;
 
 
+/*
+ * atribuipIDX
+ * IN:	 *pontoI - Lista de pontos
+ * 		  *arg ponteiro para dado lido do arquivo
+ * 		  i índice da coluna em que arg foi lido
+ * OUT:	 -
+ * POST: Atribui arg a ponto. Nome se i for 0 e 
+ * 			componente no índice i-1 caso contrário.
+ */
 void atribuipIDX(Ponto *pontoI, int i, void *arg);
+
+/*
+ * alocaColunas
+ * IN:	 *pontoI - Lista de pontos
+ * 		  nLinhas Número de linhas lidas no arquivo
+ * 		  nColunas Número de colunas lidas no arquivo
+ * OUT:	 -
+ * POST: Aloca memória para o vetor de componentes dos pontos.
+ */
 void alocaColunas(Ponto *pontoI, int nLinhas, int nColunas);
+
+/*
+ * arestaComp
+ * IN:	 *aresta1 - Ponteiro para aresta.
+ * 		 *aresta2 Ponteiro para aresta.
+ * OUT:	 1 se aresta1 > aresta2
+ * 		 0 se aresta1 == aresta2
+ * 		-1 se aresta1 < aresta2
+ * POST: -
+ */
 int arestaComp(const void *aresta1, const void *aresta2);
+
+/*
+ * liberaPontos
+ * IN:	 *pontos - Lista de pontos
+ * OUT:	 -
+ * POST: Libera toda a memória usada pelos pontos
+ */
 void liberaPontos(Ponto *pontos, int dimensaoL);
 
+/*
+ * escreveArquivo
+ * IN:	 *pontos - Lista de pontos.
+ * 		 *nomeArquivo - Caminho e nome para arquivo de saída.
+ * 		  nLinhas - Número de linhas lidas no arquivo de entrada.
+ * 		  k - Número de grupos.
+ * OUT:	 -
+ * POST: Arquivo no caminho especificado.
+ */
+void escreveArquivo(Ponto *pontos, int k, int nLinhas, char *nomeArquivo);
+
+/*
+ * compPontos
+ * IN:	 *ponto1 - Um ponto
+ * 		 *ponto2 - Outro ponto
+ * OUT:	 1 se ponto1 > ponto2
+ * 		 0 se ponto1 == ponto2
+ * 		-1 se ponto1 < ponto2
+ * POST: -
+ */
+int compPontos(const void *ponto1, const void *ponto2);
+
+/*
+ * compGrupos
+ * IN:	 *grupo1 - Um grupo
+ * 		 *grupo2 - Outro grupo
+ * OUT:	 1 se grupo1 > grupo2
+ * 		 0 se grupo1 == grupo2
+ * 		-1 se grupo1 < grupo2
+ * POST: -
+ */
+int compGrupos(const void *grupo1, const void *grupo2);
+
+void inicializaMatrizGruposPontos(Grupo *grupos, Ponto *pontos, int nLinhas, int k);
 #endif

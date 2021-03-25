@@ -4,9 +4,6 @@
 #include <assert.h>
 
 #include "../headers/ponto.h"
-#include "../headers/dbg.h"
-#include "../headers/mathShit.h"
-#include "../headers/grafoShit.h"
 
 Ponto* leEntrada(char* nome, int nLinhas, int nColunas)
 {
@@ -15,12 +12,15 @@ Ponto* leEntrada(char* nome, int nLinhas, int nColunas)
     alocaColunas(pontos, nLinhas, nColunas);
 
     pontos_pointer = fopen(nome, "r");
-    check(pontos_pointer, "DEU RUIM NA ABERTURA DO ARQUIVO")
+    if(!pontos_pointer)
+    {
+        perror("Fopen retornou ponteiro nulo na abertura do aqruivo!\n");
+        exit(1);
+    }
     char *line;
     size_t len = 0;
     ssize_t nRead;
     char *line_token;
-
     int iterAuxL = 0;
     while((nRead = getline(&line, &len, pontos_pointer)) != -1)
     {
@@ -30,25 +30,22 @@ Ponto* leEntrada(char* nome, int nLinhas, int nColunas)
             exit(4);
         }
 
-        //printf("%s\n", line);
         line_token = strtok(line, ",");
         int iterAuxC = 0;
+        
         while(line_token != NULL)
         {
-            //char *teste = strdup(line_token);
             atribuipIDX(&(pontos[iterAuxL]), iterAuxC, &line_token);
-            //printf("%s\n", line_token);
             line_token = strtok(NULL, ",");
             iterAuxC++;
         }
+        pontos[iterAuxL].pai = -1;
+        pontos[iterAuxL].rank = 0;
         iterAuxL++;
     }
     free(line);
     fclose(pontos_pointer);
     return pontos;
-
-error:
-    exit(1);
 }
 
 
@@ -105,7 +102,7 @@ int pegaDimensoesL(char *nome)
 
     if(!linhas)
     {
-        perror("Problema na leitura das linhas");
+        perror("Problema na leitura das linhas\n");
         exit(3);
     }
     free(line);
@@ -113,59 +110,36 @@ int pegaDimensoesL(char *nome)
 }
 
 
-int main(int argc, char**argv)
+void escreveArquivo(Ponto *pontos, int k, int nLinhas, char *nomeArquivo)
 {
-    if(argc != 4)
-    {
-        printf("Número bizarro de argumentos de entrada\n");
-        exit(1);
-    }
-    char *arqEntrada = argv[1];
-    int k = atoi(argv[2]);
-    char *arqSaida = argv[3];
+    Grupo *zap = (Grupo *)malloc(sizeof(Grupo) * k);
 
-
-    int linhas = pegaDimensoesL(arqEntrada);
-    int colunas = pegaDimensoesC(arqEntrada);
-    Ponto *pontos = leEntrada(arqEntrada, linhas, colunas);
-    for(int i = 0; i < linhas; i ++)
-    {
-        //printf("%s ", pontos[i].name);
-        for(int j = 0; j < colunas; j++)
-        {
-            //printf("%lf\n", pontos[i].components[j]);
-        }
-        //printf("\n");
-    }
-
-    int nArestas = (linhas * (linhas - 1))/2;
-    Aresta *arestas = wtArestas(pontos, linhas, colunas, nArestas);
-    qsort(arestas, nArestas, sizeof(Aresta), &arestaComp);
-    //Grafo *grafo = criaGrafo(linhas, nArestas, arestas);
-    Subset *ufVec = malloc(sizeof(Subset) * linhas);
-    for(int i = 0; i < linhas; i++)
-    {
-        ufVec[i].pai = -1;
-        ufVec[i].rank = 0;
-    }
-
-    int delimitador = linhas - 1;
-    Aresta* movimentoSemTerra = fazMst(ufVec, arestas, linhas, nArestas, k);
-    free(arestas);
-
-    for(int i = 0; i < linhas; i++)
-    {
-        if(ufVec[i].pai != -1)
-        {
-            printf("O ponto %s pertence ao grupo %d\n", pontos[i].name, ufVec[i].pai);
-        }
-        else
-        {
-            printf("O ponto %s pertence ao grupo %d\n", pontos[i].name, i);
-        }
-    }
+    inicializaMatrizGruposPontos(zap, pontos, nLinhas, k);
+    FILE *fp = fopen(nomeArquivo, "w+");
     
-    liberaPontos(pontos, linhas);
-    free(ufVec);
-    free(movimentoSemTerra);
+    for(int i = 0; i < k; i++)
+    {
+        qsort(zap[i].nomePontos, zap[i].qtdPontos+1, sizeof(char*), &compPontos);
+    }
+    qsort(zap, k, sizeof(Grupo), &compGrupos);
+    
+    for(int i = 0; i < k; i++)
+    {
+        for(int j = 0; j <= zap[i].qtdPontos; j++)
+        {
+            fprintf(fp, "%s", zap[i].nomePontos[j]);
+            if(j != zap[i].qtdPontos)
+            {
+                fprintf(fp, ",");
+            }
+        }
+        fputc('\n', fp);
+    }
+    fclose(fp);
+
+    for(int i = 0; i < k; i++)
+    {
+        free(zap[i].nomePontos);
+    }
+    free(zap);
 }
